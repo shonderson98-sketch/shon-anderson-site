@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אבחון עצמי 90 שניות | שון אנדרסון</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Nagishli Accessibility -->
+    <script>
+        var nl_lang = "he";
+        var nl_pos = "TL";
+        var nl_color = "blue";
+        var nl_dir = "./nagishli/";
+    </script>
+    <script src="./nagishli/nagishli.js"></script>
+    <nagishli></nagishli>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0D0D0D;
+            --bg-card: #1A1A1A;
+            --primary-gold: #D4A96A;
+            --primary-dark: #C4956A;
+            --accent-cream: #F5F0EB;
+            --text-light: #F5F0EB;
+            --text-dim: #B8B8B8;
+            --border-color: rgba(212, 169, 106, 0.2);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Heebo', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            direction: rtl;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(212, 169, 106, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #D4A96A, #C4956A);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Header */
+        header {
+            padding: 32px 24px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary-gold);
+        }
+
+        header p {
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+
+        /* Main Container */
+        .container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quiz-wrapper {
+            width: 100%;
+            max-width: 700px;
+        }
+
+        /* Questions */
+        .question-slide {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            pointer-events: none;
+        }
+
+        .question-slide.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        .question-slide h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            color: var(--accent-cream);
+            line-height: 1.3;
+        }
+
+        /* Answer Options */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .option-card {
+            padding: 20px 24px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-card);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: right;
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 500;
+            position: relative;
+        }
+
+        .option-card:hover {
+            border-color: var(--primary-gold);
+            background: rgba(212, 169, 106, 0.05);
+            transform: translateX(-4px);
+        }
+
+        .option-card.selected {
+            background: rgba(212, 169, 106, 0.2);
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 20px rgba(212, 169, 106, 0.3);
+        }
+
+        .option-card.selected::before {
+            content: '✓';
+            position: absolute;
+            left: 20px;
+            font-size: 1.4rem;
+            color: var(--primary-gold);
+            font-weight: bold;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 14px 36px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #D4A96A, #C4956A);
+            color: var(--bg-dark);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+
+        .btn-primary.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(212, 169, 106, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-gold);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-gold);
+            background: rgba(212, 169, 106, 0.1);
+        }
+
+        /* Result Screen */
+        .result-slide {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+            pointer-events: none;
+        }
+
+        .result-slide.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, rgba(212, 169, 106, 0.1), rgba(196, 149, 106, 0.1));
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px 32px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .result-emoji {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .result-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--primary-gold);
+        }
+
+        .result-card p {
+            font-size: 1rem;
+            color: var(--text-dim);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .result-card .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-cta {
+            background: linear-gradient(135deg, #D4A96A, #C4956A);
+            color: var(--bg-dark);
+            margin-top: 24px;
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 1.05rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 640px) {
+            header h1 {
+                font-size: 1.6rem;
+            }
+
+            .question-slide h2 {
+                font-size: 1.4rem;
+                margin-bottom: 24px;
+            }
+
+            .container {
+                padding: 24px 16px;
+            }
+
+            .result-card {
+                padding: 28px 20px;
+            }
+
+            .result-card h3 {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Scrollbar Styling */
+        .container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .container::-webkit-scrollbar-thumb {
+            background: rgba(212, 169, 106, 0.3);
+            border-radius: 4px;
+        }
+
+        .container::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 169, 106, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container">
+        <div class="progress-bar"></div>
+    </div>
+
+    <header>
+        <h1>אבחון עצמי 90 שניות</h1>
+        <p>בואו נגלה איפה העסק שלך עומד ומה הצעד הבא</p>
+    </header>
+
+    <div class="container">
+        <div class="quiz-wrapper">
+            <!-- Q1: Business Status (Everyone) -->
+            <div class="question-slide active" data-question="1" data-track="all">
+                <h2>רגע לפני שצוללים, איפה העסק פוגש אותך הבוקר?</h2>
+                <div class="options-grid">
+                    <div class="option-card" data-answer="1a" data-next-track="A">
+                        עסק חדש/בהקמה
+                    </div>
+                    <div class="option-card" data-answer="1b" data-next-track="B">
+                        עסק קיים, משהו תקוע
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="nextQuestion()">המשך →</button>
+                </div>
+            </div>
+
+            <!-- Q2 Track A: What stops you -->
+            <div class="question-slide" data-question="2" data-track="A">
+                <h2>מה המחשבה שהכי עוצרת אותך מלצאת לאור?</h2>
+                <div class="options-grid">
+                    <div class="option-card" data-answer="2a_A">
+                        ערפל שיווקי
+                    </div>
+                    <div class="option-card" data-answer="2b_A">
+                        בלאגן בראש
+                    </div>
+                    <div class="option-card" data-answer="2c_A">
+                        רתיעה טכנולוגית
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="prevQuestion()">← חזור</button>
+                    <button class="btn-primary" onclick="nextQuestion()">המשך →</button>
+                </div>
+            </div>
+
+            <!-- Q2 Track B: How you end the day -->
+            <div class="question-slide" data-question="2" data-track="B">
+                <h2>איך את/ה מסיים/ת את יום העבודה בדרך כלל?</h2>
+                <div class="options-grid">
+                    <div class="option-card" data-answer="2a_B">
+                        מרוקן/ת
+                    </div>
+                    <div class="option-card" data-answer="2b_B">
+                        מוצף/ת
+                    </div>
+                    <div class="option-card" data-answer="2c_B">
+                        תקוע/ת
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="prevQuestion()">← חזור</button>
+                    <button class="btn-primary" onclick="nextQuestion()">המשך →</button>
+                </div>
+            </div>
+
+            <!-- Q3 Track A: What's missing -->
+            <div class="question-slide" data-question="3" data-track="A">
+                <h2>מה הכי חסר לך כרגע כדי להתחיל?</h2>
+                <div class="options-grid">
+                    <div class="option-card" data-answer="3a_A">
+                        ביטחון ומיקוד
+                    </div>
+                    <div class="option-card" data-answer="3b_A">
+                        תשתית בסיסית
+                    </div>
+                    <div class="option-card" data-answer="3c_A">
+                        יד מבצעת
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="prevQuestion()">← חזור</button>
+                    <button class="btn-primary" onclick="nextQuestion()">המשך →</button>
+                </div>
+            </div>
+
+            <!-- Q3 Track B: Main frustration -->
+            <div class="question-slide" data-question="3" data-track="B">
+                <h2>מה הבעיה הכי מעצבנת שחוזרת על עצמה בעסק?</h2>
+                <div class="options-grid">
+                    <div class="option-card" data-answer="3a_B">
+                        מחירים/לקוחות לא מדויקים
+                    </div>
+                    <div class="option-card" data-answer="3b_B">
+                        לידים מתפספסים
+                    </div>
+                    <div class="option-card" data-answer="3c_B">
+                        אין מערכת חכמה
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="prevQuestion()">← חזור</button>
+                    <button class="btn-primary" onclick="nextQuestion()">המשך →</button>
+                </div>
+            </div>
+
+            <!-- Q4: Management style (Everyone) -->
+            <div class="question-slide" data-question="4" data-track="all">
+                <h2>בכנות, איך נראה הניהול השוטף שלך היום?</h2>
+                <div class="options-grid">
+                    <div class="option-card" data-answer="4a">
+                        הכל בראש שלי
+                    </div>
+                    <div class="option-card" data-answer="4b">
+                        ג'אגלינג בין כלים
+                    </div>
+                    <div class="option-card" data-answer="4c">
+                        יש כלים אבל לא מחוברים
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="prevQuestion()">← חזור</button>
+                    <button class="btn-primary" onclick="showResult()">ראה את התוצאה שלי →</button>
+                </div>
+            </div>
+
+            <!-- Result Screen -->
+            <div class="result-slide" data-slide="result">
+                <div class="result-card" id="resultCard">
+                    <span class="result-emoji" id="resultEmoji">🎯</span>
+                    <h3 id="resultTitle">תוצאה</h3>
+                    <p id="resultDescription">בתחזוקה...</p>
+                    <div class="subtitle" id="resultSubtitle">קבע שיחת אבחון להבנה עמוקה יותר</div>
+                </div>
+                <button class="btn-cta" onclick="bookConsultation()">קביעת שיחת אבחון</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State Management
+        let currentQuestion = 1;
+        let currentTrack = null;
+        let answers = {};
+
+        const resultMap = {
+            'A_2a_A_3a_A_4a': {
+                emoji: '🚀',
+                title: 'המומנט שלך כבר הגיע',
+                description: 'יש לך חזון ברור אבל צריך כלים להיים אותו. זה בדיוק מה שאנחנו עושים — בניית דף נחיתה שמתרגם את הערך שלך למילים שהלקוחות שלך מבינים.'
+            },
+            'A_2a_A_3a_A_4b': {
+                emoji: '🎨',
+                title: 'אתה מוצר טוב בחיפוש טוב אחד',
+                description: 'יש לך סיפור, יש לך ערך — אבל הוא אבוד בין 10 כלים. דף נחיתה מוקד יהפוך אתה משהו מתבקש לדבר שמוכר.'
+            },
+            'A_2a_A_3a_A_4c': {
+                emoji: '⚙️',
+                title: 'הרכיבים שלך כמעט מוכנים',
+                description: 'כבר יש לך כלים, אבל הם לא משוחחים אחד עם השני. דף נחיתה תקופה היא ה\"מוצא\" שמושך אליך את הלקוחות הנכונים בהתחלה.'
+            },
+            'A_2b_A_3b_A_4a': {
+                emoji: '🧠',
+                title: 'אתה בחלל הלא-ידוע',
+                description: 'התבוסה טבעית — יש כל כך הרבה אפשרויות. בואי נוציא אתה מהערפל. אבחון מקצועי + דף נחיתה מוקד = הדרך הקצרה ביותר מכאן.'
+            },
+            'B_2a_B_3a_B_4a': {
+                emoji: '💪',
+                title: 'יש לך מנוע, צריך תיקייה',
+                description: 'אתה מרוקן/ת כי מחזר אתה בין הרבה דברים. אתה לא צריך יותר עבודה — אתה צריך ארגון. מערכת מוקדת תהיה המשחק שלך.'
+            },
+            'B_2b_B_3b_B_4b': {
+                emoji: '📊',
+                title: 'אתה בדק הרגשות של הלקוחות שלך',
+                description: 'מוצף אומר שאתה מטפל לכמה דברים בו זמנית ממשהו שעדיף שהוא אוטומטי. סימן פלוס: לך יש לקוחות. סימן מינוס: הם לא מחכים. בואי נארגן את הזרימה.'
+            },
+            'B_2c_B_3c_B_4c': {
+                emoji: '🔌',
+                title: 'אתה מאמין בכלים אבל הם לא עובדים לך',
+                description: 'כמובן שאתה תקוע — הכלים שלך לא מדברים אחד עם השני. אם נחברנו את הנקודות, אתה תעבוד 40% פחות וההכנסה תעלה. זה לא פיזיקה, זה סדר.'
+            }
+        };
+
+        // Track selection
+        document.querySelectorAll('[data-next-track]').forEach(card => {
+            card.addEventListener('click', function() {
+                selectAnswer(this);
+            });
+        });
+
+        // Answer selection for other questions
+        document.querySelectorAll('.option-card[data-answer]:not([data-next-track])').forEach(card => {
+            card.addEventListener('click', function() {
+                selectAnswer(this);
+            });
+        });
+
+        function selectAnswer(element) {
+            const parent = element.closest('.question-slide');
+            parent.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            parent.querySelector('.btn-primary').classList.add('show');
+        }
+
+        function nextQuestion() {
+            const activeSlide = document.querySelector('.question-slide.active');
+            const selected = activeSlide.querySelector('.option-card.selected');
+
+            if (!selected) return;
+
+            const answer = selected.dataset.answer;
+            const question = activeSlide.dataset.question;
+            answers[`q${question}`] = answer;
+
+            // Determine track
+            if (question === '1') {
+                currentTrack = selected.dataset.nextTrack;
+            }
+
+            // Update progress
+            updateProgress();
+
+            // Move to next question
+            if (question === '1') {
+                currentQuestion = 2;
+            } else if (question === '2') {
+                currentQuestion = 3;
+            } else if (question === '3') {
+                currentQuestion = 4;
+            }
+
+            showQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                currentQuestion--;
+                if (currentQuestion === 1) {
+                    currentTrack = null;
+                }
+                showQuestion();
+                updateProgress();
+            }
+        }
+
+        function showQuestion() {
+            document.querySelectorAll('.question-slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            const nextSlide = document.querySelector(
+                `.question-slide[data-question="${currentQuestion}"][data-track="${currentTrack || 'all'}"]`
+            );
+
+            if (nextSlide) {
+                nextSlide.classList.add('active');
+            }
+        }
+
+        function updateProgress() {
+            let progress = 0;
+            if (currentQuestion === 1) progress = 25;
+            else if (currentQuestion === 2) progress = 50;
+            else if (currentQuestion === 3) progress = 75;
+            else if (currentQuestion === 4) progress = 100;
+
+            document.querySelector('.progress-bar').style.width = progress + '%';
+        }
+
+        function showResult() {
+            const activeSlide = document.querySelector('.question-slide.active');
+            const selected = activeSlide.querySelector('.option-card.selected');
+
+            if (!selected) return;
+
+            answers['q4'] = selected.dataset.answer;
+
+            // Build result key
+            const resultKey = `${currentTrack}_${answers.q2}_${answers.q3}_${answers.q4}`;
+            const result = resultMap[resultKey] || {
+                emoji: '🌟',
+                title: 'אתה בנתיב הנכון',
+                description: 'יש לך את המרכיבים הנכונים. בואי נדבר על איך לחבר אותם ולהשיק לאור.'
+            };
+
+            // Display result
+            document.getElementById('resultEmoji').textContent = result.emoji;
+            document.getElementById('resultTitle').textContent = result.title;
+            document.getElementById('resultDescription').textContent = result.description;
+
+            // Hide all questions
+            document.querySelectorAll('.question-slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            // Show result
+            document.querySelector('.result-slide').classList.add('active');
+
+            // Update progress to 100%
+            document.querySelector('.progress-bar').style.width = '100%';
+        }
+
+        function bookConsultation() {
+            window.location.href = 'https://wa.me/972528772385?text=אני%20עשיתי%20את%20אבחון%2090%20השניות%20ורוצה%20לשמוע%20יותר';
+        }
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

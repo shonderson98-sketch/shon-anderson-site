@@ -2,6 +2,33 @@
   base = "."
   publish = "public"
 
+# Preserve direct access to HTML files
+[[redirects]]
+  from = "/quiz.html"
+  to = "/quiz.html"
+  status = 200
+
+[[redirects]]
+  from = "/landing-offer.html"
+  to = "/landing-offer.html"
+  status = 200
+
+[[redirects]]
+  from = "/terms.html"
+  to = "/terms.html"
+  status = 200
+
+[[redirects]]
+  from = "/diagnostic.html"
+  to = "/diagnostic.html"
+  status = 200
+
+[[redirects]]
+  from = "/diagnostic-quick.html"
+  to = "/diagnostic-quick.html"
+  status = 200
+
+# Fallback to React app
 [[redirects]]
   from = "/*"
   to = "/index.html"
